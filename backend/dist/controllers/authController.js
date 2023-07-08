@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = exports.test = void 0;
+exports.loginUser = exports.registerUser = exports.test = void 0;
 const user_1 = require("../models/user");
 const bcrypt_1 = require("../helpers/bcrypt");
 const test = (req, res) => {
@@ -35,20 +35,42 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 error: "password is less than 8 characters",
             });
         }
-        const userExists = yield user_1.UserModel.findOne({ email });
-        if (userExists) {
+        const userFoundInDB = yield user_1.UserModel.findOne({ email });
+        if (userFoundInDB) {
             return res.json({ error: "email is already in use" });
         }
         const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
-        const user = yield user_1.UserModel.create({
+        const newUser = yield user_1.UserModel.create({
             name,
             email,
             password: hashedPassword,
         });
-        return res.json(user);
+        return res.json(newUser);
     }
     catch (error) {
         console.error(error);
     }
 });
 exports.registerUser = registerUser;
+const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email, password } = req.body;
+        const userFoundInDB = yield user_1.UserModel.findOne({ email });
+        const userWasNotFoundInDB = !userFoundInDB;
+        if (userWasNotFoundInDB) {
+            return res.json({ error: "user doesn't exist" });
+        }
+        const hashedPassword = userFoundInDB.password;
+        const passwordsMatch = yield (0, bcrypt_1.comparePassword)(password, hashedPassword);
+        if (passwordsMatch) {
+            return res.json({ message: "password correct" });
+        }
+        else {
+            return res.json({ error: "incorrect password" });
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
+exports.loginUser = loginUser;

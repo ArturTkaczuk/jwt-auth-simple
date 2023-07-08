@@ -1,7 +1,10 @@
+import toast from "react-hot-toast";
 import axios from "../axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Login = (): JSX.Element => {
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -9,11 +12,21 @@ export const Login = (): JSX.Element => {
 
   const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const { email, password } = loginData;
     try {
-      let res = await axios.get("/");
-      console.log(res);
-    } catch (err) {
-      console.error(err);
+      const { data } = await axios.post("/login", { email, password });
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        setLoginData({
+          email: "",
+          password: "",
+        });
+        toast.success("Logged in successfully");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
