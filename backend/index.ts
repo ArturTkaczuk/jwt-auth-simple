@@ -2,11 +2,16 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import router from "./rotues/authRoutes";
+import mongoose from "mongoose";
+import { connectDB } from "./database/mongoose";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
+
+// connect database
+connectDB();
 
 // CORS middleware
 const allowedOrigins = ["http://localhost:3000"];

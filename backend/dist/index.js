@@ -7,9 +7,12 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 const authRoutes_1 = __importDefault(require("./rotues/authRoutes"));
+const mongoose_1 = require("./database/mongoose");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
+// connect database
+(0, mongoose_1.connectDB)();
 // CORS middleware
 const allowedOrigins = ["http://localhost:3000"];
 const options = {
