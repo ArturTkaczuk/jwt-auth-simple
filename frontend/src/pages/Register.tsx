@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const Register = (): JSX.Element => {
-  const [data, setData] = useState({
+  const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
     password: "",
@@ -18,22 +18,28 @@ export const Register = (): JSX.Element => {
         <input
           type="text"
           placeholder="Enter name"
-          value={data.name}
-          onChange={(e) => setData({ ...data, name: e.target.value })}
+          value={registerData.name}
+          onChange={(e) =>
+            setRegisterData({ ...registerData, name: e.target.value })
+          }
         />
         <label>Email</label>
         <input
           type="email"
           placeholder="Enter email"
-          value={data.email}
-          onChange={(e) => setData({ ...data, email: e.target.value })}
+          value={registerData.email}
+          onChange={(e) =>
+            setRegisterData({ ...registerData, email: e.target.value })
+          }
         />
         <label>Password</label>
         <input
           type="password"
           placeholder="Enter password"
-          value={data.password}
-          onChange={(e) => setData({ ...data, password: e.target.value })}
+          value={registerData.password}
+          onChange={(e) =>
+            setRegisterData({ ...registerData, password: e.target.value })
+          }
         />
         <button type="submit">Submit</button>
       </form>
