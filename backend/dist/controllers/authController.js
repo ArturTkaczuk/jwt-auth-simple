@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerUser = exports.test = void 0;
 const user_1 = require("../models/user");
+const bcrypt_1 = require("../helpers/bcrypt");
 const test = (req, res) => {
     res.json("Test working");
 };
@@ -38,10 +39,11 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         if (userExists) {
             return res.json({ error: "email is already in use" });
         }
+        const hashedPassword = yield (0, bcrypt_1.hashPassword)(password);
         const user = yield user_1.UserModel.create({
             name,
             email,
-            password,
+            password: hashedPassword,
         });
         return res.json(user);
     }

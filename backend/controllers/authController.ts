@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserModel as User } from "../models/user";
+import { hashPassword } from "../helpers/bcrypt";
 
 export const test = (req: Request, res: Response) => {
   res.json("Test working");
@@ -31,10 +32,12 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.json({ error: "email is already in use" });
     }
 
+    const hashedPassword = await hashPassword(password);
+
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     return res.json(user);
