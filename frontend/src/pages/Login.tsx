@@ -1,3 +1,4 @@
+import axios from "../axios";
 import { useState } from "react";
 
 export const Login = (): JSX.Element => {
@@ -6,8 +7,14 @@ export const Login = (): JSX.Element => {
     password: "",
   });
 
-  const loginUser = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
+  const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      let res = await axios.get("/");
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
