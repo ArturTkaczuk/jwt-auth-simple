@@ -1,5 +1,3 @@
-type HomeProps = {};
-
-export const Home = ({}: HomeProps): JSX.Element => {
+export const Home = (): JSX.Element => {
   return <div>HOME</div>;
 };
