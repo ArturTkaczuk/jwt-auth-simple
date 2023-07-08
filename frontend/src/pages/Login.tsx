@@ -1,5 +1,17 @@
-type LoginProps = {};
+export const Login = (): JSX.Element => {
+  const loginUser = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+  };
 
-export const Login = ({}: LoginProps): JSX.Element => {
-  return <div>LOGIN</div>;
+  return (
+    <div>
+      <form onSubmit={loginUser}>
+        <label>Email</label>
+        <input type="email" placeholder="Enter email" />
+        <label>Password</label>
+        <input type="password" placeholder="Enter password" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
 };
