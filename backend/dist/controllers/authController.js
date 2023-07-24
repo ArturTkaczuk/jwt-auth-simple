@@ -8,10 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = exports.test = void 0;
+exports.getProfile = exports.loginUser = exports.registerUser = exports.test = void 0;
 const user_1 = require("../models/user");
 const bcrypt_1 = require("../helpers/bcrypt");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const test = (req, res) => {
     res.json("Test working");
 };
@@ -63,7 +69,15 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const hashedPassword = userFoundInDB.password;
         const passwordsMatch = yield (0, bcrypt_1.comparePassword)(password, hashedPassword);
         if (passwordsMatch) {
-            return res.json({ message: "password correct" });
+            jsonwebtoken_1.default.sign({
+                id: userFoundInDB._id,
+                email: userFoundInDB.email,
+                name: userFoundInDB.name,
+            }, process.env.JWT_SECRET, {}, (err, token) => {
+                if (err)
+                    throw err;
+                return res.cookie("token", token).json(userFoundInDB);
+            });
         }
         else {
             return res.json({ error: "incorrect password" });
@@ -74,3 +88,17 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.loginUser = loginUser;
+const getProfile = (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
+            if (err)
+                throw err;
+            res.json(user);
+        });
+    }
+    else {
+        res.json(null);
+    }
+};
+exports.getProfile = getProfile;

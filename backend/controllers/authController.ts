@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { UserModel as User } from "../models/user";
 import { comparePassword, hashPassword } from "../helpers/bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const test = (req: Request, res: Response) => {
   res.json("Test working");
@@ -59,11 +62,35 @@ export const loginUser = async (req: Request, res: Response) => {
     const hashedPassword = userFoundInDB.password as string;
     const passwordsMatch = await comparePassword(password, hashedPassword);
     if (passwordsMatch) {
-      return res.json({ message: "password correct" });
+      jwt.sign(
+        {
+          id: userFoundInDB._id,
+          email: userFoundInDB.email,
+          name: userFoundInDB.name,
+        },
+        process.env.JWT_SECRET as string,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          return res.cookie("token", token).json(userFoundInDB);
+        }
+      );
     } else {
       return res.json({ error: "incorrect password" });
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const getProfile = (req: Request, res: Response) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET as string, {}, (err, user) => {
+      if (err) throw err;
+      res.json(user);
+    });
+  } else {
+    res.json(null);
   }
 };

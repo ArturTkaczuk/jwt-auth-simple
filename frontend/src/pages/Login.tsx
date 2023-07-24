@@ -1,7 +1,19 @@
 import toast from "react-hot-toast";
 import axios from "../axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/userContext";
+
+type userType = {
+  id: string;
+  email: string;
+  name: string;
+} | null;
+
+type UserContextType = {
+  user: userType;
+  fetchUser: () => Promise<void>;
+};
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
@@ -9,6 +21,8 @@ export const Login = (): JSX.Element => {
     email: "",
     password: "",
   });
+
+  const { fetchUser } = useContext(UserContext) as UserContextType;
 
   const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +37,7 @@ export const Login = (): JSX.Element => {
           password: "",
         });
         toast.success("Logged in successfully");
+        fetchUser();
         navigate("/");
       }
     } catch (error) {
